@@ -1,0 +1,71 @@
+✅ The Key Idea
+🧠 Lambdas can be used anywhere a functional interface is expected.
+
+❓What is a Functional Interface?
+================================
+A functional interface is an interface with only one abstract method.
+🔸 Runnable is a classic example:
+
+@FunctionalInterface
+public interface Runnable {
+    void run(); // only one abstract method
+}
+
+✅ Since Runnable has exactly one method, Java allows us to use a lambda in place of creating a Runnable object.
+
+
+✅ How This Works with submit()
+================================
+The submit() method in ExecutorService has this signature:
+Future<?> submit(Runnable task)
+
+Now, when you do this:
+executor.submit(() -> {
+    System.out.println("Hello from thread!");
+});
+You are:
+Passing a lambda that matches Runnable's method signature: void run()
+So Java automatically converts this lambda into a Runnable object.
+
+It’s as if you had written:
+Runnable task = new Runnable() {
+    public void run() {
+        System.out.println("Hello from thread!");
+    }
+};
+executor.submit(task);
+
+
+
+🔍 How to Identify When You Can Use a Lambda
+============================================
+Any time a method expects a functional interface, you can pass a lambda.
+
+✅ Common functional interfaces in Java:
+| Interface       | Method Signature   | Can use Lambda? |
+| --------------- | ------------------ | --------------- |
+| `Runnable`      | `void run()`       | ✅ Yes           |
+| `Callable<T>`   | `T call()`         | ✅ Yes           |
+| `Consumer<T>`   | `void accept(T t)` | ✅ Yes           |
+| `Function<T,R>` | `R apply(T t)`     | ✅ Yes           |
+| `Supplier<T>`   | `T get()`          | ✅ Yes           |
+
+So if a method accepts any of these, or your own interface with one method, you can use a lambda.
+
+
+
+❗ If the method had multiple abstract methods?
+Then lambdas would NOT work.
+Lambdas only replace functional interfaces.
+
+
+✅ Summary
+==========
+| Concept                          | Explanation                                 |
+| -------------------------------- | ------------------------------------------- |
+| Functional Interface             | Interface with 1 abstract method            |
+| Runnable is Functional Interface | ✅ Yes (`void run()`)                        |
+| Lambda `() -> {}`                | Matches `Runnable` — no args, no return     |
+| Java behavior                    | Automatically converts lambda to `Runnable` |
+
+

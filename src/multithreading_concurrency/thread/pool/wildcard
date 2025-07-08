@@ -1,0 +1,34 @@
+✅ What is Future<?>?
+=====================
+Future<?> future = executor.submit(() -> doSomething());
+
+🔍 The parts:
+Future<T> is a generic interface that represents the result of an asynchronous computation.
+<?> is a wildcard — it means "unknown type".
+
+🧠 What Does <?> Mean?
+========================
+<?> = "I don’t know (or care) what the actual type is."
+It tells the compiler:
+“This is a Future of some type, but I’m not going to use that value in a type-specific way.”
+
+🔸 Why Use <?>?
+==============
+Because sometimes the task you submit returns nothing (i.e., Runnable) — so you don’t care about the return type:
+
+Future<?> future = executor.submit(() -> {
+    System.out.println("Hello from Runnable");
+});
+
+Since Runnable doesn't return a result (void), the actual return type is Future<?>
+You just use the future to wait for completion, not get a result.
+
+
+✅ Summary
+==========
+| Syntax           | Meaning                                   |
+| ---------------- | ----------------------------------------- |
+| `Future<?>`      | Future of an unknown type (wildcard)      |
+| `Future<String>` | Future that will return a String          |
+| `<?>`            | "Some type, but we don’t care what it is" |
+

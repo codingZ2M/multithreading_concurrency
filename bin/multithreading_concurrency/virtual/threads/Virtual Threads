@@ -1,0 +1,160 @@
+🧠 What Are Virtual Threads?
+===============================
+Virtual threads are a lightweight alternative to platform threads (OS threads), introduced in Java 21 as a stable feature.
+💡 Created by the JVM, not the OS — so thousands can be run with very low overhead
+🧵 They are still Thread objects — they run your code the same way, but far more efficiently
+🚀 Best for concurrent tasks, like handling many user requests, file reads, etc.
+
+
+✅ Real-World Scenario: Hotel Booking System
+Imagine a system that:
+	-Handles thousands of hotel booking requests
+	-Each booking task:
+		-Simulates I/O delay (e.g., DB call or external service)
+		-Returns a confirmation message
+
+👉 Normally, running 10,000 threads would be slow or crash the system.
+But with virtual threads, it runs smoothly.
+
+
+🧪 Let's Build It in Java 21
+=============================
+Java 21 added support for Thread.ofVirtual().start(...) and 
+Executors.newVirtualThreadPerTaskExecutor()
+
+
+🔍 What's Happening Here?
+=========================
+| Feature                                       | Description                                                               |
+| --------------------------------------------- | ------------------------------------------------------------------------- |
+| `Executors.newVirtualThreadPerTaskExecutor()` | Creates a lightweight thread for **each task**                            |
+| `executor.submit(...)`                        | Submits tasks that simulate a hotel booking with a short delay            |
+| `Thread.sleep(...)`                           | Even with thousands of sleeps, no blocking at OS level — virtual threads! |
+| `Future<String>`                              | Each booking task returns a confirmation message                          |
+
+
+
+🚀 Why Virtual Threads Matter Here
+=================================
+| Without Virtual Threads                | With Virtual Threads (Java 21)             |
+| -------------------------------------- | ------------------------------------------ |
+| OS threads are **heavy**, use memory   | Virtual threads are **lightweight**        |
+| Limited by OS (thousands = slow/crash) | Can handle **tens of thousands** with ease |
+| Expensive context switching            | Managed by JVM scheduler efficiently       |
+
+
+
+✅ Summary
+==========
+Virtual threads let you handle massive concurrency efficiently.
+Best for tasks that wait on I/O — like APIs, databases, or file systems.
+Use Executors.newVirtualThreadPerTaskExecutor() or Thread.ofVirtual().start(...).
+
+
+
+📦 What is Executors.newVirtualThreadPerTaskExecutor()?
+=======================================================
+This factory method:
+Executors.newVirtualThreadPerTaskExecutor()
+returns an ExecutorService that:
+	-Spins up one new virtual thread per submitted task
+	-Is ideal for high-concurrency (e.g., thousands of independent I/O tasks)
+	-Is very cheap and scalable (you can run 100,000+ threads!)
+	-You don't have to manage thread creation manually
+	-The thread will automatically shut down when task is done
+
+
+✅ When to Use It
+=================
+Use newVirtualThreadPerTaskExecutor() when:
+| Use Case                                  | Why It's a Good Fit                        |
+| ----------------------------------------- | ------------------------------------------ |
+| Handling 1000s of concurrent tasks        | Virtual threads scale effortlessly         |
+| Tasks that involve **waiting** (e.g. I/O) | Virtual threads don’t block real threads   |
+| Want simpler code without thread pools    | You get a thread per task without overhead |
+
+
+🧨 Warning: Don't Use for CPU-Heavy Tasks
+=========================================
+Virtual threads are great for I/O-bound tasks.
+❗ For CPU-bound tasks, prefer a fixed thread pool (newFixedThreadPool) — too many threads fighting for CPU
+ will slow things down.
+ Ex: 🔢 Math/Computation, 🎥 Image/Video Processing, 📈 Data Processing, 🔁 Game Loops, 🔡 Text Processing, 🔢 Statistical Analysis
+
+
+How Thread object calls Call() on Callable object? 
+==================================================
+When you call:
+Future<String> future = executor.submit(bookingTask);
+
+🔁 Behind the scenes:
+	-bookingTask is a Callable<String> (i.e., it has a call() method).
+	-The ExecutorService wraps the Callable in a RunnableFuture.
+	-A Thread is created to run that RunnableFuture.
+	-Inside that thread, the run() method internally calls call() on the Callable.
+	-The result of call() is stored in the returned Future.
+
+
+✅ Real-World Use Cases for newVirtualThreadPerTaskExecutor()
+=============================================================
+1. 🌐 Web Server Handling Many Requests
+	-Each HTTP request handled in its own virtual thread
+	-Ideal for frameworks like Spring Boot, Micronaut, or Helidon Nima
+	-Frees you from managing thread pools manually
+✅ Why virtual threads?
+Traditional thread pools can’t scale easily to 100,000 concurrent users — virtual threads can.
+
+
+2. 📦 Microservices with REST/gRPC Calls
+	-Making multiple backend API/database calls per request
+	-Each call can run in a separate virtual thread
+✅ Why?
+Virtual threads can block without using actual OS threads — perfect for I/O-heavy APIs.
+
+
+3. 🗃️ Database Querying / ORM Layer
+	-Running thousands of independent DB queries (JDBC)
+	-Virtual threads let you "block" without hogging CPU threads
+✅ Why?
+JDBC is blocking — virtual threads allow better scaling without async complexity.
+
+
+4. 📩 Message Consumers (Kafka, RabbitMQ)
+	-Processing each message in its own virtual thread
+✅ Why?
+Cheap to create and isolate processing per message.
+
+
+5. 🧪 Simulations / Testing with Many Users
+	-Simulating 10,000 virtual users interacting with your system
+	-Each user runs in a separate virtual thread
+✅ Why?
+Great for realistic load testing or behavior simulation.
+
+
+6. 🧾 Web Crawlers or Scrapers
+	-Each crawl or page fetch runs in a separate virtual thread
+	-Lightweight and clean code
+	
+	
+7. 🛫 Booking Systems
+	-Each hotel, ticket, or flight booking can run in a separate virtual thread
+	-No need for async callbacks
+
+
+8. 🛍️ E-commerce Order Processing
+	-Payment, inventory check, shipping coordination, etc.
+	-Each task handled concurrently but logically separated in its own thread
+
+
+9. 📅 Scheduled Notifications / Reminders
+	-Sending thousands of reminders or emails (e.g., at midnight)
+	-Easy to scale and reason about with per-task threads
+
+
+10. 🔁 Batch File Processing
+	-Parsing and validating 1000s of uploaded documents in parallel
+
+
+
+
