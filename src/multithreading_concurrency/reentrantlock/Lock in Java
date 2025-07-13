@@ -1,0 +1,52 @@
+🔒 What Do We Mean by "Lock" in Java (ReentrantLock or synchronized)?
+====================================================================
+In Java multithreading, a lock is a mechanism used to prevent multiple threads from accessing the 
+same resource (like a variable, method, or object) at the same time, which could lead to data inconsistency 
+or race conditions.
+
+🧠 Simple Analogy: The ATM Room Lock
+Imagine a room with a single ATM inside.
+	-Only one customer can enter the room at a time to use the ATM.
+	-The door has a lock.
+	-A customer must acquire the lock (open the door) to enter.
+	-While the lock is held, others must wait outside.
+	-When the customer finishes and releases the lock, the next one can go in.
+	
+	
+That "lock" = ReentrantLock (or synchronized) in Java.
+
+
+🔄 In Code Terms
+==================
+Here’s what happens when a thread tries to use a shared resource (like a method or object):
+
+lock.lock();        // Thread tries to acquire the lock
+try {
+    // Critical section — only one thread can be here at a time
+    System.out.println("Accessing shared resource...");
+} finally {
+    lock.unlock();  // Always release the lock so others can proceed
+}
+
+NOTE: If another thread tries lock.lock() while it’s already locked:
+	-It waits (blocks) until the current thread calls unlock()
+	
+	
+
+🚦 Why Use Locks?
+	To protect shared resources like:
+		-Bank account balances
+		-Counters
+		-Files
+		-Database connections
+		-Anything that must not be accessed by multiple threads simultaneously
+		
+		
+🔄 Reentrancy?
+A ReentrantLock means the same thread can lock the resource multiple times, and it must 
+unlock the same number of times.
+
+lock.lock();   // OK
+lock.lock();   // Still OK - same thread!
+lock.unlock();
+lock.unlock(); // Fully unlocked

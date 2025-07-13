@@ -1,0 +1,58 @@
+🔄 What is ReentrantLock in Java?
+ReentrantLock is a class from the java.util.concurrent.locks package that provides more advanced locking 
+capabilities than the traditional synchronized keyword.
+
+🧠 Concept First: What is ReentrantLock?
+=========================================
+Think of ReentrantLock like a special door lock:
+ -Only one person (thread) can go through at a time.
+ -The same person (thread) can re-enter the same door multiple times without getting blocked (this is "reentrancy").
+ -You can choose to:
+	-Try the door: “If it’s open, go in. If not, skip.”
+    -Wait for the door: “Wait a bit and then leave if it’s still locked.”
+	-Break in if interrupted: “Hey! You don’t have to wait anymore—get out!”
+
+
+📦 Real-World Scenario:
+=======================
+ATM Access in a Bank
+Imagine a bank with 1 ATM machine.
+	-Multiple customers (threads) want to use the ATM.
+	-Only one customer can use it at a time.
+	-A customer may need to access it multiple times in a session (reentrancy).
+	-If it’s busy, some customers may:
+		-Wait patiently
+		-Leave after some time (timeout)
+		-Be told to stop waiting (interruption)
+		
+		
+🧠 Why Use ReentrantLock Instead of synchronized?
+================================================
+➕ Advantages:
+
+| Feature               | `synchronized` | `ReentrantLock`                       |
+| --------------------- | -------------- | ------------------------------------- |
+| Explicit lock/unlock  | ❌              | ✅  lock()/unlock()                                |
+| Try without waiting   | ❌              | ✅ `tryLock()`                         |
+| Timeout               | ❌              | ✅ `tryLock(timeout)`                  |
+| Interruptible waiting | ❌              | ✅ `lockInterruptibly()`               |
+| Fairness control      | ❌              | ✅ FIFO with `new ReentrantLock(true)` |
+
+
+🚨 Important: Always Unlock!
+Because you manually lock and unlock, forgetting to call unlock() can cause deadlocks.
+ Always use try-finally as shown.
+ 
+ 
+ ✅ General Guideline: Base Lock Choice on Task Characteristics
+ ==============================================================
+ Let’s go through it logically — task by task.
+ 
+ | Task Type                 | Lock Type                                                     | Why?                                                                                                  |
+| ------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 🔐 **lock()**             | For **critical, must-complete operations** (e.g., withdraw)   | We **must not skip** this operation. If the lock is held, the thread waits patiently.                 |
+| 🟡 **tryLock()**          | For **optional, non-urgent operations** (e.g., deposit UI)    | If lock is busy, skip or defer. Useful in **non-blocking UI or retries**.                             |
+| ⏱️ **tryLock(timeout)**   | For **time-sensitive reads or actions** (e.g., balance check) | You’re willing to wait a little, but **not forever**. Fails gracefully.                               |
+| ❗ **lockInterruptibly()** | For **cancelable or stoppable tasks** (e.g., transfer)        | Long-running or blocking ops that **should stop if requested**, like canceled transfers, user aborts. |
+ 
+ 

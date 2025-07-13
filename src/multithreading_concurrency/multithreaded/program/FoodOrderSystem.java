@@ -20,6 +20,7 @@ package multithreading_concurrency.multithreaded.program;
 public class FoodOrderSystem {
 	
     public static void main(String[] args) {
+    	
         System.out.println("🛒 Order placed!");
 
         // Defining two tasks using Runnable interface.

@@ -1,0 +1,31 @@
+✅ What does try (...) {} mean in Java?
+This is a try-with-resources statement.
+
+☑️ Purpose:
+It’s used to ensure that a resource (like a file, DB connection, or in this case: a task scope) is 
+automatically closed when the block ends — even if an exception occurs.
+
+🔐 Requirements:
+The object inside try (...) must implement AutoCloseable — which StructuredTaskScope does!
+
+
+
+🧠 Why do we use it with StructuredTaskScope?
+===============================================
+Here's what happens:
+try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+    ...
+}
+
+✅ A new scope (ShutdownOnFailure) is created.
+✅ Tasks are forked (submitted) within the scope.
+✅ When the block ends:
+	If everything succeeded: the scope exits cleanly.
+	If anything failed: the scope automatically cancels remaining tasks.
+✅ The scope is closed automatically — no manual cleanup required.
+✅ Auto-close: Scope shuts down automatically when the block exits
+
+This protects against:
+	Thread leaks
+	Dangling tasks
+	Uncaught exceptions

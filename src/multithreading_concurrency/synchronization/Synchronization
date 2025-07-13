@@ -1,0 +1,79 @@
+🧵 1. What Is Synchronization?
+Definition:
+Synchronization is the process of controlling access to shared resources by multiple threads to prevent race conditions, inconsistent data, or unexpected behavior.
+
+Key Problem:
+When two or more threads modify shared data at the same time, the result may be incorrect or unpredictable.
+
+💥 Real-World Scenario #1: Bank Account Withdrawal
+Imagine two ATMs accessing the same bank account. If both try to withdraw money at the same time, 
+the balance could go below zero — even though there was enough for only one transaction.
+
+
+🔓 Without Synchronization:
+===========================
+class BankAccount {
+    private int balance = 100;
+
+    public void withdraw(String user, int amount) {
+        if (balance >= amount) {
+            System.out.println(user + " is trying to withdraw " + amount);
+            try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+            balance -= amount;
+            System.out.println(user + " completed withdrawal. Remaining balance: " + balance);
+        } else {
+            System.out.println(user + " cannot withdraw. Not enough balance.");
+        }
+    }
+}
+
+
+BankAccount account = new BankAccount();
+Thread t1 = new Thread(() -> account.withdraw("Alice", 80));
+Thread t2 = new Thread(() -> account.withdraw("Bob", 80));
+t1.start();
+t2.start();
+
+❌ Problem:
+Both may check balance >= amount before either deducts it → double withdrawal, overdrawn account.
+
+
+✅ Fix: synchronized Keyword
+=============================
+public synchronized void withdraw(String user, int amount) {
+    // same logic
+}
+
+Or use a synchronized block:
+
+public void withdraw(String user, int amount) {
+    synchronized (this) {
+        if (balance >= amount) {
+            // same logic
+        }
+    }
+}
+
+✅ Result:
+Now only one thread can enter the critical section at a time. The other waits.
+
+
+NOTE: In Java, both synchronized methods and synchronized blocks are used to control access to code that 
+should only be executed by one thread at a time. However, they differ in granularity, flexibility,
+ and performance.
+ 
+ 
+ ✅ 1. Synchronized Method
+		-Declared using the synchronized keyword in the method signature.
+		-Locks the entire method.
+		-The lock is on the current object (this) for instance methods or on the class object for static methods
+		
+		
+✅ 2. Synchronized Block
+		-Only a specific portion of code is synchronized.
+		-Lock is acquired on a specified object, not necessarily this.
+		-More flexible and can improve performance by reducing the locked section.
+		
+		🔒 Lock acquired on:	
+			-Any object you choose (someObject), giving finer control.
+			

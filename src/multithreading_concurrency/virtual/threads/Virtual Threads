@@ -1,6 +1,7 @@
 🧠 What Are Virtual Threads?
 ===============================
-Virtual threads are a lightweight alternative to platform threads (OS threads), introduced in Java 21 as a stable feature.
+Virtual threads are a lightweight alternative to platform threads (OS threads), introduced in Java 21  under Project Loom as a stable feature.
+Unlike platform threads, virtual threads are cheap to create and dispose, making them ideal for high-concurrency workloads like I/O-bound tasks.
 💡 Created by the JVM, not the OS — so thousands can be run with very low overhead
 🧵 They are still Thread objects — they run your code the same way, but far more efficiently
 🚀 Best for concurrent tasks, like handling many user requests, file reads, etc.

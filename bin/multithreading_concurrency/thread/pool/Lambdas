@@ -54,7 +54,7 @@ So if a method accepts any of these, or your own interface with one method, you 
 
 
 
-❗ If the method had multiple abstract methods?
+❗ If the interface had multiple abstract methods?
 Then lambdas would NOT work.
 Lambdas only replace functional interfaces.
 

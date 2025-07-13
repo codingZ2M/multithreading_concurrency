@@ -20,6 +20,7 @@ import java.util.concurrent.*;
  */
 
 public class MovieTheaterWithExecutor {
+	
     public static void main(String[] args) {
         System.out.println("🎬 Entering theater...");
 

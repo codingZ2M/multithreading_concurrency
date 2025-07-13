@@ -1,0 +1,53 @@
+🧠 What is a record in Java?
+A record is a special kind of class in Java used to define immutable data carriers. 
+It's a concise way to declare classes whose main purpose is to store data.
+
+Here’s one from the example:
+public record UserProfile(String id, String name, String email) {}
+
+
+This single line is equivalent to writing this full class:
+public final class UserProfile {
+    private final String id;
+    private final String name;
+    private final String email;
+
+    public UserProfile(String id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    public String id() { return id; }
+    public String name() { return name; }
+    public String email() { return email; }
+
+    @Override
+    public boolean equals(Object o) { ... }
+
+    @Override
+    public int hashCode() { ... }
+
+    @Override
+    public String toString() { ... }
+}
+
+
+✅ Why use record for model classes?
+===================================
+| Feature                    | Benefit                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------- |
+| **Immutability**           | All fields are `final` by default.                                              |
+| **Conciseness**            | No need to write boilerplate (getters, constructor, `equals`, `toString`, etc.) |
+| **Intent clarity**         | Signals: “This class is just a data holder.”                                    |
+| **Better for concurrency** | Since data is immutable, it's thread-safe by design.                            |
+
+
+
+🛠️ When not to use record?
+==========================
+Avoid using record if:
+	You need mutable fields.
+	The class has significant business logic, not just data.
+	You want to extend another class (records can’t extend classes).
+	

@@ -1,6 +1,7 @@
 package multithreading_concurrency.thread.lifecycle;
 
 class TicketTask extends Thread {
+	
     public void run() {
         System.out.println("🎫 Buying movie tickets...");
         try {
